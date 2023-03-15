@@ -1,7 +1,8 @@
 import express from 'express';
 import cookieParser from "cookie-parser";
 import cors from 'cors';
-import { createConnection } from "typeorm";
+import {createConnection} from "typeorm";
+import {routes} from "./routes";
 
 createConnection().then(() => {
     const app = express();
@@ -13,11 +14,9 @@ createConnection().then(() => {
         credentials: true
     }));
 
-    app.get('/', (req, res) => {
-        res.send('hello');
-    });
+    routes(app);
 
     app.listen(8000, () => {
-        console.log('listening to port 8000');
+        console.log('listening to port 8000')
     });
-});
+})
