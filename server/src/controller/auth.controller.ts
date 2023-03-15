@@ -85,3 +85,35 @@ export const AuthenticatedUser = async (req: Request, res: Response) => {
         });
     }
 }
+
+export const Refresh = async (req: Request, res: Response) => {
+    try {
+        const refreshToken = req.cookies['refreshToken'];
+
+        const payload: any = verify(refreshToken, "refresh_secret");
+
+        if(!payload) {
+            return res.status(401).send({
+                message: 'unauthenticated'
+            });
+        }
+
+        const accessToken = sign({
+            id: payload.id
+        }, "access_secret", {expiresIn: '30s'});
+
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000 //1day
+        });
+
+        res.send({
+            message: 'success'
+        });
+
+    } catch (e) {
+        return res.status(401).send({
+            message: 'unauthenticated'
+        });
+    }
+}
