@@ -4,6 +4,7 @@ import {User} from "../entity/user.entity";
 import bcryptjs from 'bcryptjs';
 import {sign, verify} from "jsonwebtoken";
 import {Token} from "../entity/token.entity";
+import {ROLE} from "../data/user.role";
 
 export const Register = async (req: Request, res: Response) => {
     const {name, email, password} = req.body;
@@ -11,7 +12,8 @@ export const Register = async (req: Request, res: Response) => {
     const user = await getRepository(User).save({
         name,
         email,
-        password: await bcryptjs.hash(password, 12)
+        password: await bcryptjs.hash(password, 12),
+        role: ROLE.USER
     });
 
     res.send(user);
@@ -53,7 +55,8 @@ export const Login = async (req: Request, res: Response) => {
     })
 
     const token = sign({
-        id: user.id
+        id: user.id,
+        role: user.role
     }, "access_secret", {expiresIn: '30s'});
 
     res.send({
