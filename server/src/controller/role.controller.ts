@@ -1,6 +1,8 @@
 import {NextFunction, Request, Response} from "express";
 import {ROLE} from "../data/user.role";
 import {verify} from "jsonwebtoken";
+import {createQueryBuilder, getRepository} from "typeorm";
+import {User} from "../entity/user.entity";
 
 export const authRole = (role: ROLE) => {
     return (req: Request, res: Response, next: NextFunction) => {
@@ -16,4 +18,39 @@ export const authRole = (role: ROLE) => {
 
         next();
     }
+}
+
+export const UpdateRole = async (req: Request, res: Response) => {
+    try {
+        const {id} = req.params;
+        const {role} = req.body;
+
+        const user = await userIsExist(id);
+
+        if(!user) {
+            return res.status(404).json({message: `cannot find any product with ID ${id}`});
+        } else {
+            await getRepository(User)
+                .createQueryBuilder()
+                .update()
+                .set({role: role})
+                .where("id = :id", { id: id}).execute();
+
+            return res.status(200).json({message: 'role updated'})
+        }
+
+    } catch (error: any) {
+        res.status(500).json({message: error.message});
+    }
+}
+
+
+
+const userIsExist = async (id: string) => {
+    const user = await getRepository(User)
+        .createQueryBuilder("user")
+        .where("user.id = :id", { id: id })
+        .getOne();
+
+    return user;
 }
