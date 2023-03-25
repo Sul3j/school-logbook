@@ -1,6 +1,6 @@
 import {Router} from "express";
 import {AuthenticatedUser, Login, Logout, Refresh, Register} from "./controller/auth.controller";
-import {authRole, DeleteUser, UpdateRole} from "./controller/role.controller";
+import {authRole, DeleteUser, GetAllUsers, UpdateRole} from "./controller/role.controller";
 import {ROLE} from "./data/user.role";
 
 export const routes = (router: Router) => {
@@ -13,5 +13,6 @@ export const routes = (router: Router) => {
     //menage users
     router.put('/api/role/:id', UpdateRole);
     router.delete('/api/user/:id', DeleteUser);
+    router.get('/api/users', GetAllUsers);
 
 }

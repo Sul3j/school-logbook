@@ -66,6 +66,21 @@ export const DeleteUser = async (req: Request, res: Response) => {
     }
 }
 
+export const GetAllUsers = async (req: Request, res: Response) => {
+    const users = await getRepository(User)
+        .createQueryBuilder()
+        .getMany();
+
+    const usersData: Object[] = [];
+
+    users.forEach(function (user: User) {
+        const {id, name, email, role} = user;
+        usersData.push({id, name, email, role});
+    });
+
+    return res.send(usersData);
+}
+
 const userIsExist = async (id: string) => {
     const user = await getRepository(User)
         .createQueryBuilder("user")
